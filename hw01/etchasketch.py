@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #//////////////////////////////////////
 #	etchasketch.py
-#	Is a etch a sketch in the terminal.
+#	This is an etch-a-sketch in the terminal.
 #	Wiring:	
 #	Setup:	
 #	See:	
@@ -9,8 +9,17 @@
 
 import sys
 
+# Print Instructions
+sys.stdout.write("Welcome! Here are the instructions for this etch-a-sketch:\n")
+sys.stdout.write("Type Clear to clear the board\n")
+sys.stdout.write("Type Exit to exit the game\n")
+sys.stdout.write("Type u to go up the board\n")
+sys.stdout.write("Type d to go down the board\n")
+sys.stdout.write("Type l to go left on the board\n")
+sys.stdout.write("Type r to go right on the board\n")
+
 # get etch size form user
-grid_size = int(input())
+grid_size = int( input('How big do you want your etch-a-sketch? \n') )
 xMax = grid_size
 yMax = grid_size
 
@@ -18,34 +27,62 @@ yMax = grid_size
 x = 0
 y = 0
 
-grid = []
 # initialize grid
-for i in range(grid_size):
-    grid[i] = [xMax]
-    for j in range(len(grid)):
-        grid[i][j] = ' '
+grid = { (i,j):' ' for i in range(xMax) for j in range(yMax) }
+
+# clear board function
+def clearBoard():
+    grid = { (i,j):' ' for i in range(xMax) for j in range(yMax) }
 
 # + at current location
-grid[x][y] = '+'
+grid[x,y] = '+'
 
 # Print grid
 def printGrid(gridtoPrint):
-    #stuff
-    sys.stdout.write('   0 1 2 3 4 5 6 7\n')
-    for i in range(len(gridtoPrint)):
-        sys.stdout.write(format("%d: ",i))
-        for j in range(len(gridtoPrint[i])):
-            sys.stdout.write(format("%s ", gridtoPrint[i][j]))
+    sys.stdout.write('     ')
+    for i in range(0, grid_size ):
+        sys.stdout.write('{:} '.format(i))
+    sys.stdout.write('\n')
+    for i in range(0, grid_size ):
+        sys.stdout.write('{:>3}: '.format(i))
+        for j in range(0, grid_size):
+            sys.stdout.write('{:} '.format(gridtoPrint[i,j]))
         sys.stdout.write("\n")
 
 printGrid(grid)
 
-
-for line in sys.stdin:
-    inp = line.rstrip()
+# Loop to Check Terminal Input for Grid
+while True:
+    inp = input('Direction> ')
+    #sys.stdout.write("{:} {:} \n".format(x,y))
+    grid[y,x] = '*'
     if inp == 'Exit':
-        break
-    sys.stdout.write("processeing")
-sys.stdout.write("Goodbye!")
-
-sys.exit()
+        sys.stdout.write("Goodbye!\n")
+        sys.exit()
+    elif inp == 'Clear':
+        sys.stdout.write("Cleared!\n")
+        clearBoard()
+    elif inp == 'u':
+        sys.stdout.write("up!\n")
+        y = y - 1
+        if y < 0:
+            y = grid_size - 1
+    elif inp == 'd':
+        sys.stdout.write("down!\n")
+        y = y + 1
+        if y >= grid_size:
+            y = 0
+    elif inp == 'l':
+        sys.stdout.write("left!\n")
+        x = x - 1
+        if x < 0:
+            x = grid_size - 1
+    elif inp == 'r':
+        sys.stdout.write("right!\n")
+        x = x + 1
+        if x >= grid_size:
+            x = 0
+    else:
+        sys.stdout.write("I don't understand, say that again\n")
+    grid[y,x] = '+'
+    printGrid(grid)  
