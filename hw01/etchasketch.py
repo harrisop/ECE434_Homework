@@ -1,6 +1,8 @@
 #!/usr/bin/python
 #//////////////////////////////////////
-#	etchasketch.py
+#   Sophia Harrison
+#   12/8/22
+#   etchasketch.py
 #	This is an etch-a-sketch in the terminal.
 #	Wiring:	
 #	Setup:	
@@ -28,11 +30,13 @@ x = 0
 y = 0
 
 # initialize grid
-grid = { (i,j):' ' for i in range(xMax) for j in range(yMax) }
+grid = { (i,j):' ' for i in range(0,xMax) for j in range(0,yMax) }
 
 # clear board function
 def clearBoard():
-    grid = { (i,j):' ' for i in range(xMax) for j in range(yMax) }
+    for i in range(0, grid_size):
+        for j in range(0, grid_size):
+            grid[i,j] = ' '
 
 # + at current location
 grid[x,y] = '+'
@@ -54,13 +58,14 @@ printGrid(grid)
 # Loop to Check Terminal Input for Grid
 while True:
     inp = input('Direction> ')
-    #sys.stdout.write("{:} {:} \n".format(x,y))
     grid[y,x] = '*'
     if inp == 'Exit':
         sys.stdout.write("Goodbye!\n")
         sys.exit()
     elif inp == 'Clear':
         sys.stdout.write("Cleared!\n")
+        x = 0
+        y = 0
         clearBoard()
     elif inp == 'u':
         sys.stdout.write("up!\n")
