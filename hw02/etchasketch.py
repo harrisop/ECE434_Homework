@@ -107,18 +107,19 @@ def update_sketch(channel):
 def direction_pressed(channel):
     print('Edge detected on channel %s'%channel)
     update_sketch(channel)
+    
 
 # Set Up Events
 GPIO.remove_event_detect(BUT1)
-GPIO.add_event_detect(BUT1, GPIO.BOTH, callback=direction_pressed) 
+GPIO.add_event_detect(BUT1, GPIO.FALLING, callback=direction_pressed) 
 GPIO.remove_event_detect(BUT2)
-GPIO.add_event_detect(BUT2, GPIO.BOTH, callback=direction_pressed) 
+GPIO.add_event_detect(BUT2, GPIO.FALLING, callback=direction_pressed) 
 GPIO.remove_event_detect(BUT3)
-GPIO.add_event_detect(BUT3, GPIO.BOTH, callback=direction_pressed) 
+GPIO.add_event_detect(BUT3, GPIO.FALLING, callback=direction_pressed) 
 GPIO.remove_event_detect(BUT4)
-GPIO.add_event_detect(BUT4, GPIO.BOTH, callback=direction_pressed) 
+GPIO.add_event_detect(BUT4, GPIO.FALLING, callback=direction_pressed) 
 GPIO.remove_event_detect(BUT5)
-GPIO.add_event_detect(BUT5, GPIO.BOTH, callback=direction_pressed) 
+GPIO.add_event_detect(BUT5, GPIO.FALLING, callback=direction_pressed) 
 
 # Sleep While waiting for button press
 while True:

@@ -41,11 +41,11 @@ Results:
 
 ### Summary Table for GPIO
 >Table of Results:
-| Method | Frequency |
+| Method | Period (seconds) |
 | ---- | --------- |
-| bash| |
-| python | |
-| C | |
+| bash| 30 m |
+| python | 178 micro |
+| C |  |
 
 
 ## GPIOD

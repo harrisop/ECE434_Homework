@@ -60,7 +60,7 @@ int main(int argc, char** argv)
 		// gpio_set_value(gpio, toggle);
 		// printf("...value set to %d...\n", toggle);
 
-		lseek(gpio_fd,argc,SEEk_CUR)
+		lseek(gpio_fd,argc,SEEK_CUR);
 
 		if (toggle)
 			write(gpio_fd, "1", 2);

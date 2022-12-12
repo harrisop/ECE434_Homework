@@ -15,15 +15,10 @@ import gpiod
 import sys
 
 CONSUMER='getset'
-CHIP='1'
-setoffests=[17, 28] # P9_23, P9_12
 
-CHIP2 = '3'
-setoffests2=[19] # P9_27
-
-CHIP3 = '0'
+CHIP='4'
+setoffsets=[17, 19, 20, 28] # P9_23, P9_12
 getoffsets = [30, 31, 13, 5] # P9_11, P9_13, P9_19, P9_17
-setoffests3=[20] # P9_41
 
 def print_event(event):
     if event.type == gpiod.LineEvent.RISING_EDGE:
@@ -38,22 +33,12 @@ def print_event(event):
                                                            event.sec, event.nsec))
 
 # get lines
-chip = gpiod.Chip(CHIP3)
-
+chip = gpiod.Chip(CHIP)
 getlines = chip.get_lines(getoffsets)
 getlines.request(consumer=CONSUMER, type=gpiod.LINE_REQ_EV_BOTH_EDGES)
 
 # set lines
-chip = gpiod.Chip(CHIP)
-setlines = chip.get_lines(setoffests)
-#setlines.request(consumer=CONSUMER, type=gpiod.LINE_REQ_DIR_OUT)
-
-chip = gpiod.Chip(CHIP2)
-setlines.append(chip.get_lines(setoffests))
-#setlines.request(consumer=CONSUMER, type=gpiod.LINE_REQ_DIR_OUT)
-
-chip = gpiod.Chip(CHIP3)
-setlines.append(chip.get_lines(setoffests))
+setlines = chip.get_lines(setoffsets)
 setlines.request(consumer=CONSUMER, type=gpiod.LINE_REQ_DIR_OUT)
 
 
