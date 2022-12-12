@@ -12,7 +12,7 @@
 import Adafruit_BBIO.GPIO as GPIO
 import time
 
-LEDPin = "P9_23"
+LEDPin = "P9_12"
 # Set up LED Pin
 GPIO.setup(LEDPin, GPIO.OUT)
 

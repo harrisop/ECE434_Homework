@@ -7,36 +7,37 @@ The python file LEDButtonTest.py reads switches and lights a corresponding LED, 
 
 ## Measuring a GPIO Pin on an Oscilloscope
 ### GPIO with Bash
-1. voltage
-2. period and freq.
-3. 
-4. 
-5. 
+1. The min voltage = 3.75 mV and the max voltage is 3.0 V
+2. The period is 252 ms and the freq. is 3.97 Hz
+3. The period is a little over double 100 ms.
+4. They differ because other processes make the period slower than intended by the code. The file has to be opened and closed, along with other processes that contribute the periods being different.
+5. Around 4% of the CPU is being used.
 6. The shortest period I could get is
 
-| Sleep Time | Period | Processor Usage |
+| Sleep Time | Period (ms) | Processor Usage % |
 | ---- | --------- | -------- |
-| bash| | |
-| python | | |
-| C | | |
+| 0.1 | 252 |  4 |
+| 0.01 | 65 | 14 |
+|  0.001 | 60 | 17 |
+| 0.0001 | 40 | 18 |
 
-7. 
-8. 
-9. 
-10. 
-11. 
+7. The period is not very stable when using a sleep time of 0.0001. The is a standard deviation of 28m.
+8. The period remained relatively unstable with the standard deviaiton in the period being about 14m.
+9. After cleaning up some of the unneeded lines, the period became slightly more stable with the standard deviation of the period being about 11m.
+10. After using sh instead, the period did get shorter and came out to about 30 ms.
+11. The shortest period I got was 30 ms, which I got after doing question 10.
 
 ### GPIO with Python
 See fastLEDToggle.py file for code
 Results:
-1. period and freq.
-2. how much processor being used
+1. The period was 177.8 microseconds and the freq. was 5.625kHz.
+2. About 90% of the processor was being used.
 
 ### GPIO with C
 See togglegpio.c file for code.
 Results:
-1. period and freq.
-2. how much processor being used
+1. The period was  and the freq. was 
+2. About  of the processor was being used.
 
 ### Summary Table for GPIO
 >Table of Results:
@@ -53,14 +54,16 @@ Using the toggle examples, I measured how fast I could toggle one gpio bit using
 
 ### Summary Table for GPIOD
 >Table of Results:
-| File | Frequency |
+| File | Frequency (Hz) |
 | ---- | --------- |
-| toggle1.c | |
-| toggle1.py | |
-| toggle2.c | |
-| toggle2.py | |
+| toggle1.c |  |
+| toggle1.py | 4.975 |
+| toggle2.c |  |
+| toggle2.py | 4.979 |
 
 
 ## getSetEvent.py and Etch-a-Sketch pt. 2
 I modified the file getsetEvent.py so that it could read four push buttons and turn on the corresponding LED.
+
 The etchasketch.py file is the second iteration where the direction of the pen that draws on the etch-a-sketch is controlled by the push buttons.
+I have 5 pushbuttons for the etch-a-sketch: one to go left, right, up, and down on the board and one extra button to clear the board. The board is still printed to the terminal.

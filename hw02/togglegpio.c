@@ -4,7 +4,7 @@
 //email: dingo_aus [at] internode <dot> on /dot/ net
 // From http://www.avrfreaks.net/wiki/index.php/Documentation:Linux/GPIO#gpio_framework
 //
-//Created in AVR32 Studio (version 2.0.2) running on Ubuntu 8.04
+// Created in AVR32 Studio (version 2.0.2) running on Ubuntu 8.04
 // Modified by Mark A. Yoder, 21-July-2011
 // Modified by Mark A. Yoder 30-May-2013
 
@@ -47,25 +47,32 @@ int main(int argc, char** argv)
 	//SET DIRECTION
 	gpio_set_dir(gpio, "out");
 	printf("...direction set to output\n");
+
+	gpio_fd = gpio_fd_open(gpio, O_WRONLY);
 			
 	//Run an infinite loop - will require Ctrl-C to exit this program
 	while(1)
 	{
 		toggle = !toggle;
 		
-		gpio_fd = gpio_fd_open(gpio, O_WRONLY);
+		//gpio_fd = gpio_fd_open(gpio, O_WRONLY);
 
 		// gpio_set_value(gpio, toggle);
 		// printf("...value set to %d...\n", toggle);
+
+		lseek(gpio_fd,argc,SEEk_CUR)
+
 		if (toggle)
 			write(gpio_fd, "1", 2);
 		else
 			write(gpio_fd, "0", 2);
 			
-		gpio_fd_close(gpio_fd);
+		//gpio_fd_close(gpio_fd);
 		//Pause for a while
 		usleep(onOffTime);
 	}
+
+	gpio_fd_close(gpio_fd);
 
 	return 0;
 }
