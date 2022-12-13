@@ -36,16 +36,16 @@ Results:
 ### GPIO with C
 See togglegpio.c file for code.
 Results:
-1. The period was  and the freq. was 
-2. About  of the processor was being used.
+1. The period was 300.7 microseconds and the freq. was 3.325 kHz.
+2. About 28% of the processor was being used.
 
 ### Summary Table for GPIO
 >Table of Results:
 | Method | Period (seconds) |
 | ---- | --------- |
-| bash| 30 m |
+| bash| 30 milli |
 | python | 178 micro |
-| C |  |
+| C | 300.7 micro |
 
 
 ## GPIOD
@@ -54,13 +54,16 @@ Using the toggle examples, I measured how fast I could toggle one gpio bit using
 
 ### Summary Table for GPIOD
 >Table of Results:
+> I ran each of the files below and measured the frequency of the LED using gpio60.
 | File | Frequency (Hz) |
 | ---- | --------- |
-| toggle1.c |  |
+| toggle1.c | 4.978 |
 | toggle1.py | 4.975 |
-| toggle2.c |  |
+| toggle2.c | 4.976 |
 | toggle2.py | 4.979 |
 
+## Security
+I changed the ssh port number form 22 to 2022 and followed the rest of the instructions for this section. After doing so I ran into some issues with ssh-ing into my bone and so I then changed the port back so that my bone wouldn't be giving me issues.
 
 ## getSetEvent.py and Etch-a-Sketch pt. 2
 I modified the file getsetEvent.py so that it could read four push buttons and turn on the corresponding LED.
