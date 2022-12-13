@@ -1,6 +1,6 @@
 # ECE434 Homework 2
 ## GPIO Speed
-## Sophia Harrison 
+### Sophia Harrison 
 
 ## Buttons and LEDS
 The python file LEDButtonTest.py reads switches and lights a corresponding LED, as well as tests that the LEDs and push buttons are functioning properly.
@@ -41,7 +41,7 @@ Results:
 
 ### Summary Table for GPIO
 Table of Results:
-| Method | Period in seconds |
+| Method | Period (seconds) |
 | ---- | ---- |
 | bash | 30 milli |
 | python | 178 micro |
