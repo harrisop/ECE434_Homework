@@ -41,8 +41,8 @@ Results:
 
 ### Summary Table for GPIO
 >Table of Results:
-| Method | Period (seconds) |
-| ---- | --------- |
+| Method | Period in seconds |
+| ---- | ---- |
 | bash | 30 milli |
 | python | 178 micro |
 | C | 300.7 micro |
