@@ -43,7 +43,7 @@ Results:
 >Table of Results:
 | Method | Period (seconds) |
 | ---- | --------- |
-| bash| 30 milli |
+| bash | 30 milli |
 | python | 178 micro |
 | C | 300.7 micro |
 
