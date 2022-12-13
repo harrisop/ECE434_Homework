@@ -40,7 +40,7 @@ Results:
 2. About 28% of the processor was being used.
 
 ### Summary Table for GPIO
->Table of Results:
+Table of Results:
 | Method | Period in seconds |
 | ---- | ---- |
 | bash | 30 milli |
@@ -53,8 +53,8 @@ Using the toggle examples, I measured how fast I could toggle one gpio bit using
 
 
 ### Summary Table for GPIOD
->Table of Results:
-> I ran each of the files below and measured the frequency of the LED using gpio60.
+Table of Results:
+I ran each of the files below and measured the frequency of the LED using gpio60.
 | File | Frequency (Hz) |
 | ---- | --------- |
 | toggle1.c | 4.978 |
