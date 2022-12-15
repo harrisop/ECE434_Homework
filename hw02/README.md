@@ -70,3 +70,21 @@ I modified the file getsetEvent.py so that it could read four push buttons and t
 
 The etchasketch.py file is the second iteration where the direction of the pen that draws on the etch-a-sketch is controlled by the push buttons.
 I have 5 pushbuttons for the etch-a-sketch: one to go left, right, up, and down on the board and one extra button to clear the board. The board is still printed to the terminal.
+
+# hw02 grading
+
+| Points      | Description |
+| ----------- | ----------- |
+|  2/2 | Buttons and LEDs 
+|  8/8 | Etch-a-Sketch works
+|      | Measuring a gpio pin on an Oscilloscope 
+|  2/2 | Questions answered
+|  4/4 | Table complete
+|  2/2 | gpiod
+|      | Security
+|  1/1 | ssh port 
+|  0/1 | fail2ban
+| 19/20   | **Total**
+
+Looks good.  Well done.  Did you do fail2ban?
+Does getsetEvetn.py use aggragted lines?  If so, please include an install.sh file to set it up.
