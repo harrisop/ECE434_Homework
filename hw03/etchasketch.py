@@ -1,7 +1,7 @@
 #!/usr/bin/python
 #//////////////////////////////////////
 #   Sophia Harrison
-#   12/8/22
+#   12/16/22
 #   etchasketch.py
 #	This is an etch-a-sketch in the terminal. This version interfaces with buttons.
 #	Wiring:	
@@ -12,6 +12,16 @@
 import sys
 import Adafruit_BBIO.GPIO as GPIO
 import time
+import smbus
+import binascii
+
+bus = smbus.SMBus(2)  # Use i2c bus 2
+matrix = 0x70         # Use address 0x70
+
+bus.write_byte_data(matrix, 0x21, 0)   # Start oscillator (p10)
+bus.write_byte_data(matrix, 0x81, 0)   # Disp on, blink off (p11)
+bus.write_byte_data(matrix, 0xe7, 0)   # Full brightness (page 15)
+
 
 # Define buttons, left to right
 BUT1 = "P9_11"
@@ -34,8 +44,9 @@ sys.stdout.write("Type d to go down the board\n")
 sys.stdout.write("Type l to go left on the board\n")
 sys.stdout.write("Type r to go right on the board\n")
 
-# get etch size form user
-grid_size = int( input('How big do you want your etch-a-sketch? \n') )
+# get etch size form user, fixed at 8 now
+# grid_size = int( input('How big do you want your etch-a-sketch? \n') )
+grid_size = 8
 xMax = grid_size
 yMax = grid_size
 
@@ -46,14 +57,36 @@ y = 0
 # initialize grid
 grid = { (i,j):' ' for i in range(0,xMax) for j in range(0,yMax) }
 
+cleared_grid = [0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00]
+
+current_grid = cleared_grid
+
 # clear board function
 def clearBoard():
+    bus.write_i2c_block_data(matrix, 0, cleared_grid)
     for i in range(0, grid_size):
         for j in range(0, grid_size):
             grid[i,j] = ' '
 
 # + at current location
 grid[x,y] = '+'
+
+def printonLED(gridtoPrint):
+    temp_b = ["","","","","","","",""]
+    for i in range(0, 8): # go through each column
+        for j in range(0,8): # go through each spot in this col
+            if(gridtoPrint[i,j] == '*' ):
+                temp_b[j] += "1"
+            else:
+                temp_b[j] += "0"
+    for i in range(8):
+        temp_b[i] = int(temp_b[i], 2)
+    current_grid = []
+    for i in range(0,8):
+        current_grid.append(0)
+        current_grid.append(temp_b[i])
+    bus.write_i2c_block_data(matrix, 0, current_grid)
 
 # Print grid
 def printGrid(gridtoPrint):
@@ -66,6 +99,10 @@ def printGrid(gridtoPrint):
         for j in range(0, grid_size):
             sys.stdout.write('{:} '.format(gridtoPrint[i,j]))
         sys.stdout.write("\n")
+
+    printonLED(gridtoPrint)
+
+
 
 printGrid(grid)
 
@@ -102,6 +139,7 @@ def update_sketch(channel):
         if x >= grid_size:
             x = 0
     grid[y,x] = '+'
+
     printGrid(grid)
 
 def direction_pressed(channel):
