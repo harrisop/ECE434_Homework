@@ -73,6 +73,8 @@ yMax = grid_size
 # current position
 x = 0
 y = 0
+datax = 0
+datay = 0
 
 # initialize grid
 grid = { (i,j):' ' for i in range(0,xMax) for j in range(0,yMax) }
@@ -119,82 +121,83 @@ def printGrid(gridtoPrint):
         for j in range(0, grid_size):
             sys.stdout.write('{:} '.format(gridtoPrint[i,j]))
         sys.stdout.write("\n")
-
+    # Print to the LED matrix
     printonLED(gridtoPrint)
-
-
 
 printGrid(grid)
 
-def update_sketch(channel):
+def update_sketch_y(newy):
     global y
     global x
     global grid_size
     global grid
-    
     grid[y,x] = '*'
-    if channel == BUT1:
-        sys.stdout.write("Cleared!\n")
-        x = 0
-        y = 0
-        clearBoard()
-    elif channel == BUT2:
+    newy = int(newy)
+    if newy > y:
         sys.stdout.write("up!\n")
         y = y - 1
         if y < 0:
             y = grid_size - 1
-    elif channel == BUT3:
+    elif newy < y:
         sys.stdout.write("down!\n")
         y = y + 1
         if y >= grid_size:
             y = 0
-    elif channel == BUT4:
+    grid[y,x] = '+'
+    printGrid(grid)
+
+def update_sketch_x(newx):
+    global y
+    global x
+    global grid_size
+    global grid
+    grid[y,x] = '*'
+    newx = int(newx)
+    if newx < x:
         sys.stdout.write("left!\n")
         x = x - 1
         if x < 0:
             x = grid_size - 1
-    elif channel == BUT5:
+    elif newx > x:
         sys.stdout.write("right!\n")
         x = x + 1
         if x >= grid_size:
             x = 0
     grid[y,x] = '+'
-
     printGrid(grid)
 
 def direction_pressed(channel):
+    global x
+    global y
     print('Edge detected on channel %s'%channel)
-    update_sketch(channel)
-    
+    if channel == BUT1:
+        sys.stdout.write("Cleared!\n")
+        x = 0
+        y = 0
+        clearBoard()    
 
-# Set Up Events
+# Set Up Events for buttons
 GPIO.remove_event_detect(BUT1)
 GPIO.add_event_detect(BUT1, GPIO.FALLING, callback=direction_pressed) 
-GPIO.remove_event_detect(BUT2)
-GPIO.add_event_detect(BUT2, GPIO.FALLING, callback=direction_pressed) 
-GPIO.remove_event_detect(BUT3)
-GPIO.add_event_detect(BUT3, GPIO.FALLING, callback=direction_pressed) 
-GPIO.remove_event_detect(BUT4)
-GPIO.add_event_detect(BUT4, GPIO.FALLING, callback=direction_pressed) 
-GPIO.remove_event_detect(BUT5)
-GPIO.add_event_detect(BUT5, GPIO.FALLING, callback=direction_pressed) 
 
 # Set Up Rotary Encoders to be Read 
 f = open(COUNTERPATH+'/count', 'r')
 f2 = open(COUNTERPATH2+'/count', 'r')
 
-# Sleep While waiting for button press
+# Wait for input from rotary encoders
 olddata = -1
 olddata2 = -1
 while True:
     f.seek(0)
     f2.seek(0)
-    data = f.read()[:-1]
-    data2 = f2.read()[:-1]
-    if data !=olddata:
-        olddata = data
-        print("data = " + data)
-    if data2 != olddata2:
-        olddata2 = data2
-        print("data2 = " + data2)
-    time.sleep(100)
+    datax = f.read()
+    datay = f2.read()
+    if datax != olddata:
+        olddata = datax
+        update_sketch_x(datax)
+        print("datax = " + datax)
+    if datay != olddata2:
+        olddata2 = datay
+        update_sketch_y(datay)
+        print("datay = " + datay)
+    time.sleep(0.1)
