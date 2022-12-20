@@ -15,6 +15,7 @@ import time
 import smbus
 import binascii
 
+# set up LEDmatrix
 bus = smbus.SMBus(2)  # Use i2c bus 2
 matrix = 0x70         # Use address 0x70
 
@@ -22,6 +23,25 @@ bus.write_byte_data(matrix, 0x21, 0)   # Start oscillator (p10)
 bus.write_byte_data(matrix, 0x81, 0)   # Disp on, blink off (p11)
 bus.write_byte_data(matrix, 0xe7, 0)   # Full brightness (page 15)
 
+# Set up Rotary Encoders
+COUNTERPATH = '/sys/bus/counter/devices/counter1/count0'
+COUNTERPATH2 = '/sys/bus/counter/devices/counter2/count0'
+
+maxCount = '1000000'
+
+f = open(COUNTERPATH+'/ceiling', 'w')
+f.write(maxCount)
+f.close()
+f = open(COUNTERPATH2+'/ceiling', 'w')
+f.write(maxCount)
+f.close()
+
+f = open(COUNTERPATH+'/enable', 'w')
+f.write('1')
+f.close()
+f = open(COUNTERPATH2+'/enable', 'w')
+f.write('1')
+f.close()
 
 # Define buttons, left to right
 BUT1 = "P9_11"
@@ -159,6 +179,22 @@ GPIO.add_event_detect(BUT4, GPIO.FALLING, callback=direction_pressed)
 GPIO.remove_event_detect(BUT5)
 GPIO.add_event_detect(BUT5, GPIO.FALLING, callback=direction_pressed) 
 
+# Set Up Rotary Encoders to be Read 
+f = open(COUNTERPATH+'/count', 'r')
+f2 = open(COUNTERPATH2+'/count', 'r')
+
 # Sleep While waiting for button press
+olddata = -1
+olddata2 = -1
 while True:
+    f.seek(0)
+    f2.seek(0)
+    data = f.read()[:-1]
+    data2 = f2.read()[:-1]
+    if data !=olddata:
+        olddata = data
+        print("data = " + data)
+    if data2 != olddata2:
+        olddata2 = data2
+        print("data2 = " + data2)
     time.sleep(100)
