@@ -18,3 +18,17 @@ I wired up the LED matrix to the same bus as the temperature sensors, bus 2, and
 
 ## Rotary Encoders
 For setting up the rotary encoders, I created and ran rotarySetup.sh so that they can be used in the etch-a-sketch script.
+
+# hw03 grading
+
+| Points      | Description | |
+| ----------- | ----------- |-|
+|  8/8 | TMP101 
+|  2/2 |   | Documentation 
+|  5/5 | Etch-a-Sketch
+|  3/3 |   | setup.sh
+|  2/2 |   | Documentation
+| 20/20 | **Total**
+
+*My comments are in italics. --may*
+
