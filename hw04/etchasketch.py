@@ -43,17 +43,10 @@ f = open(COUNTERPATH2+'/enable', 'w')
 f.write('1')
 f.close()
 
-# Define buttons, left to right
+# Define clear button, leftmost button
 BUT1 = "P9_11"
-BUT2 = "P9_13"
-BUT3 = "P9_14"
-BUT4 = "P9_16"
-BUT5 = "P9_21"
 GPIO.setup("P9_11", GPIO.IN) # left
-GPIO.setup("P9_13", GPIO.IN) # 2
-GPIO.setup("P9_14", GPIO.IN) # 3
-GPIO.setup("P9_16", GPIO.IN) # 4
-GPIO.setup("P9_21", GPIO.IN) # 5
+
 
 # Print Instructions
 sys.stdout.write("Welcome! Here are the instructions for this etch-a-sketch:\n")
