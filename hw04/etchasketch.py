@@ -31,15 +31,6 @@ app = Flask(__name__)
 BUT1 = "P9_11"
 GPIO.setup("P9_11", GPIO.IN) # left
 
-# Print Instructions
-sys.stdout.write("Welcome! Here are the instructions for this etch-a-sketch:\n")
-sys.stdout.write("Type Clear to clear the board\n")
-sys.stdout.write("Type Exit to exit the game\n")
-sys.stdout.write("Type u to go up the board\n")
-sys.stdout.write("Type d to go down the board\n")
-sys.stdout.write("Type l to go left on the board\n")
-sys.stdout.write("Type r to go right on the board\n")
-
 # get etch size form user, fixed at 8 now
 # grid_size = int( input('How big do you want your etch-a-sketch? \n') )
 grid_size = 8
@@ -163,7 +154,7 @@ def index():
 	templateData = {
               'title' : 'GPIO output Status!',
         }
-	return render_template('index3.html', **templateData)
+	return render_template('etchasketch.html', **templateData)
 
 @app.route("/<action>")
 def action(action):
@@ -184,7 +175,7 @@ def action(action):
     templateData = {
         'action' : action,
     }
-    return render_template('index3.html', **templateData)
+    return render_template('etchasketch.html', **templateData)
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8081, debug=True)
 

@@ -17,8 +17,7 @@ import time, struct
 # Each one of these registers is 32 bits long, each bit of which corresponding 
 # to one of 32 GPIO pins, so for pin 24 we need bit 24, or 1 shifted left 24 places.
 
-# Using Pins P8_14 LED, on chip 0
-# Trying to blink LED as fast as possible
+# Using Pins P8_14 and P8_17 for LEDs, on chip 0
 
 GPIO0_offset = 0x44e07000
 GPIO0_size = 0x44e0_7fff-GPIO0_offset
@@ -27,7 +26,9 @@ GPIO_SETDATAOUT = 0x194
 GPIO_CLEARDATAOUT = 0x190
 GPIO_DATAIN = 0x138
 LED1 = 1<<26
-
+LED2 = 1<<27
+BUT1 = 1<<31
+BUT2 = 1<<30
 
 # Next we need to make the mmap, using the desired size and offset:
 with open("/dev/mem", "r+b" ) as f:
@@ -48,6 +49,7 @@ reg_status = struct.unpack("<L", packed_reg)[0]
 # We now have the 32-bit integer value of the register, so we can configure 
 # the LED as an output by clearing its bit:
 reg_status &= ~(LED1)
+reg_status &= ~(LED2)
 
 # Now all that's left to do is to pack it little-endian back into a string and update the mmap:
 
@@ -61,12 +63,25 @@ mem[GPIO_OE:GPIO_OE+4] = struct.pack("<L", reg_status)
 # Writes to them affect only the pins whose bits are set to 1, making the next step much easier:
 try:
   while(True):
-    mem[GPIO_SETDATAOUT:GPIO_SETDATAOUT+4] = struct.pack("<L", LED1)
-    time.sleep(0.1)
-    mem[GPIO_CLEARDATAOUT:GPIO_CLEARDATAOUT+4] = struct.pack("<L", LED1)
-    time.sleep(0.1)
+
+    read1 = struct.unpack("<L", mem[GPIO_DATAIN:GPIO_DATAIN+4])[0]
+    read1 = struct.pack("<L", BUT1)
     
+    print(read1)
+
+    if(mem[GPIO_DATAIN:GPIO_DATAIN+4]):
+      mem[GPIO_SETDATAOUT:GPIO_SETDATAOUT+4] = struct.pack("<L", LED1)
+    else:
+      mem[GPIO_CLEARDATAOUT:GPIO_CLEARDATAOUT+4] = struct.pack("<L", LED1)
+    if(mem[GPIO_DATAIN:GPIO_DATAIN+4]):
+      mem[GPIO_SETDATAOUT:GPIO_SETDATAOUT+4] = struct.pack("<L", LED2)
+    else:    
+      mem[GPIO_CLEARDATAOUT:GPIO_CLEARDATAOUT+4] = struct.pack("<L", LED2)
+
+    time.sleep(0.5)
+
 except KeyboardInterrupt:
   # turn off LEDs before exiting
   mem[GPIO_CLEARDATAOUT:GPIO_CLEARDATAOUT+4] = struct.pack("<L", LED1)
+  mem[GPIO_CLEARDATAOUT:GPIO_CLEARDATAOUT+4] = struct.pack("<L", LED2)
   mem.close()
