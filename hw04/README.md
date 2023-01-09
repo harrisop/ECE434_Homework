@@ -3,6 +3,7 @@
 ### Sophia Harrison 
 
 ## Memory Map
+![ECE434 HW04-1](https://user-images.githubusercontent.com/56809512/211339552-1ff70a0e-bb65-4c29-a8cd-d72cb8dffde4.png)
 
 ## GPIO Via MMAP
 1. See LEDBUTtoggle.py for the code that reads two switches and controls two LEDs using mmap
