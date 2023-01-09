@@ -17,28 +17,29 @@ import time, struct
 # Each one of these registers is 32 bits long, each bit of which corresponding 
 # to one of 32 GPIO pins, so for pin 24 we need bit 24, or 1 shifted left 24 places.
 
-# Using Pins P8_14 and P8_17 for LEDs, on chip 0
+# Using Pins P8_11 and P8_12 for LEDs, on chip 1
+# Using pins P9_11 and P9_13 for swithces, on chip 0
 
 GPIO0_offset = 0x44e07000
-GPIO1_offset = 0x44e07000
+GPIO1_offset = 0x4804c000
 
 GPIO0_size = 0x44e0_7fff-GPIO0_offset
-GPIO1_size = 0x44e0_7fff-GPIO0_offset
+GPIO1_size = 0x4804_cfff-GPIO1_offset
 
 GPIO_OE = 0x134
 GPIO_SETDATAOUT = 0x194
 GPIO_CLEARDATAOUT = 0x190
 GPIO_DATAIN = 0x138
 
-LED1 = 1<<26
-LED2 = 1<<27
+LED1 = 1<<12
+LED2 = 1<<13
 BUT1 = 1<<31
 BUT2 = 1<<30
 
 # Next we need to make the mmap, using the desired size and offset:
 with open("/dev/mem", "r+b" ) as f:
-  mem = mmap(f.fileno(), GPIO0_size, offset=GPIO0_offset)
-  mem2 = mmap(f.fileno(), GPIO1_size, offset=GPIO1_offset)
+  mem2 = mmap(f.fileno(), GPIO0_size, offset=GPIO0_offset)
+  mem = mmap(f.fileno(), GPIO1_size, offset=GPIO1_offset)
 
 # The mmap is addressed byte by byte, so we can't just set a single bit. 
 # The easiest thing to do is grab the whole 4-byte register:
@@ -78,12 +79,12 @@ try:
     if(struct.unpack("<L", mem2[GPIO_DATAIN:GPIO_DATAIN+4])[0] & BUT1):
       mem[GPIO_SETDATAOUT:GPIO_SETDATAOUT+4] = struct.pack("<L", LED1)
       time.sleep(0.5)
+      mem[GPIO_CLEARDATAOUT:GPIO_CLEARDATAOUT+4] = struct.pack("<L", LED1)
     if(struct.unpack("<L", mem2[GPIO_DATAIN:GPIO_DATAIN+4])[0] & BUT2):
       mem[GPIO_SETDATAOUT:GPIO_SETDATAOUT+4] = struct.pack("<L", LED2)
       time.sleep(0.5)
-
-    mem[GPIO_CLEARDATAOUT:GPIO_CLEARDATAOUT+4] = struct.pack("<L", LED1)    
-    mem[GPIO_CLEARDATAOUT:GPIO_CLEARDATAOUT+4] = struct.pack("<L", LED2)
+      mem[GPIO_CLEARDATAOUT:GPIO_CLEARDATAOUT+4] = struct.pack("<L", LED2)
+        
 
 except KeyboardInterrupt:
   # turn off LEDs before exiting
