@@ -20,11 +20,16 @@ import time, struct
 # Using Pins P8_14 and P8_17 for LEDs, on chip 0
 
 GPIO0_offset = 0x44e07000
+GPIO1_offset = 0x44e07000
+
 GPIO0_size = 0x44e0_7fff-GPIO0_offset
+GPIO1_size = 0x44e0_7fff-GPIO0_offset
+
 GPIO_OE = 0x134
 GPIO_SETDATAOUT = 0x194
 GPIO_CLEARDATAOUT = 0x190
 GPIO_DATAIN = 0x138
+
 LED1 = 1<<26
 LED2 = 1<<27
 BUT1 = 1<<31
@@ -33,10 +38,12 @@ BUT2 = 1<<30
 # Next we need to make the mmap, using the desired size and offset:
 with open("/dev/mem", "r+b" ) as f:
   mem = mmap(f.fileno(), GPIO0_size, offset=GPIO0_offset)
+  mem2 = mmap(f.fileno(), GPIO1_size, offset=GPIO1_offset)
 
 # The mmap is addressed byte by byte, so we can't just set a single bit. 
 # The easiest thing to do is grab the whole 4-byte register:
-packed_reg = mem[GPIO_OE:GPIO_OE+4]
+output_packed_reg = mem[GPIO_OE:GPIO_OE+4]
+input_packed_reg = mem2[GPIO_OE:GPIO_OE+4]
 
 # We now have 32 bits packed into a string, so to do any sort of bitwise operations with it we must unpack it:
 # The 'L' tells struct.unpack() to unpack the string into an unsigned long, 
@@ -44,16 +51,21 @@ packed_reg = mem[GPIO_OE:GPIO_OE+4]
 # string is packed little-endian, or least-significant byte first. 
 # The BeagleBone's memory is little-endian, so if we tell this to struct.unpack() 
 # it will return the 32 bits in the order they are shown in the reference manual register maps.
-reg_status = struct.unpack("<L", packed_reg)[0]
+output_reg_status = struct.unpack("<L", output_packed_reg)[0]
+input_reg_status = struct.unpack("<L", input_packed_reg)[0]
 
 # We now have the 32-bit integer value of the register, so we can configure 
 # the LED as an output by clearing its bit:
-reg_status &= ~(LED1)
-reg_status &= ~(LED2)
+output_reg_status &= ~(LED1)
+output_reg_status &= ~(LED2)
+input_reg_status |= ~(BUT1)
+input_reg_status |= ~(BUT2)
 
 # Now all that's left to do is to pack it little-endian back into a string and update the mmap:
 
-mem[GPIO_OE:GPIO_OE+4] = struct.pack("<L", reg_status)
+mem[GPIO_OE:GPIO_OE+4] = struct.pack("<L", output_reg_status)
+mem2[GPIO_OE:GPIO_OE+4] = struct.pack("<L", input_reg_status)
+
 
 # Now that we know the pin is configured as an output, it's time to get blinking. 
 # We could use the GPIO_DATAOUT register to do this, 
@@ -63,22 +75,15 @@ mem[GPIO_OE:GPIO_OE+4] = struct.pack("<L", reg_status)
 # Writes to them affect only the pins whose bits are set to 1, making the next step much easier:
 try:
   while(True):
-
-    read1 = struct.unpack("<L", mem[GPIO_DATAIN:GPIO_DATAIN+4])[0]
-    read1 = struct.pack("<L", BUT1)
-    
-    print(read1)
-
-    if(mem[GPIO_DATAIN:GPIO_DATAIN+4]):
+    if(struct.unpack("<L", mem2[GPIO_DATAIN:GPIO_DATAIN+4])[0] & BUT1):
       mem[GPIO_SETDATAOUT:GPIO_SETDATAOUT+4] = struct.pack("<L", LED1)
-    else:
-      mem[GPIO_CLEARDATAOUT:GPIO_CLEARDATAOUT+4] = struct.pack("<L", LED1)
-    if(mem[GPIO_DATAIN:GPIO_DATAIN+4]):
+      time.sleep(0.5)
+    if(struct.unpack("<L", mem2[GPIO_DATAIN:GPIO_DATAIN+4])[0] & BUT2):
       mem[GPIO_SETDATAOUT:GPIO_SETDATAOUT+4] = struct.pack("<L", LED2)
-    else:    
-      mem[GPIO_CLEARDATAOUT:GPIO_CLEARDATAOUT+4] = struct.pack("<L", LED2)
+      time.sleep(0.5)
 
-    time.sleep(0.5)
+    mem[GPIO_CLEARDATAOUT:GPIO_CLEARDATAOUT+4] = struct.pack("<L", LED1)    
+    mem[GPIO_CLEARDATAOUT:GPIO_CLEARDATAOUT+4] = struct.pack("<L", LED2)
 
 except KeyboardInterrupt:
   # turn off LEDs before exiting
