@@ -23,30 +23,13 @@ bus.write_byte_data(matrix, 0x21, 0)   # Start oscillator (p10)
 bus.write_byte_data(matrix, 0x81, 0)   # Disp on, blink off (p11)
 bus.write_byte_data(matrix, 0xe7, 0)   # Full brightness (page 15)
 
-# Set up Rotary Encoders
-COUNTERPATH = '/sys/bus/counter/devices/counter1/count0'
-COUNTERPATH2 = '/sys/bus/counter/devices/counter2/count0'
-
-maxCount = '1000000'
-
-f = open(COUNTERPATH+'/ceiling', 'w')
-f.write(maxCount)
-f.close()
-f = open(COUNTERPATH2+'/ceiling', 'w')
-f.write(maxCount)
-f.close()
-
-f = open(COUNTERPATH+'/enable', 'w')
-f.write('1')
-f.close()
-f = open(COUNTERPATH2+'/enable', 'w')
-f.write('1')
-f.close()
+# import flask
+from flask import Flask, render_template, request
+app = Flask(__name__)
 
 # Define clear button, leftmost button
 BUT1 = "P9_11"
 GPIO.setup("P9_11", GPIO.IN) # left
-
 
 # Print Instructions
 sys.stdout.write("Welcome! Here are the instructions for this etch-a-sketch:\n")
@@ -79,6 +62,8 @@ current_grid = cleared_grid
 
 # clear board function
 def clearBoard():
+    datax = 0
+    datay = 0
     bus.write_i2c_block_data(matrix, 0, cleared_grid)
     for i in range(0, grid_size):
         for j in range(0, grid_size):
@@ -173,24 +158,36 @@ def direction_pressed(channel):
 GPIO.remove_event_detect(BUT1)
 GPIO.add_event_detect(BUT1, GPIO.FALLING, callback=direction_pressed) 
 
-# Set Up Rotary Encoders to be Read 
-f = open(COUNTERPATH+'/count', 'r')
-f2 = open(COUNTERPATH2+'/count', 'r')
+@app.route("/")
+def index():
+	templateData = {
+              'title' : 'GPIO output Status!',
+        }
+	return render_template('index3.html', **templateData)
 
-# Wait for input from rotary encoders
-olddata = -1
-olddata2 = -1
-while True:
-    f.seek(0)
-    f2.seek(0)
-    datax = f.read()
-    datay = f2.read()
-    if datax != olddata:
-        olddata = datax
+@app.route("/<action>")
+def action(action):
+    global datax
+    global datay
+    if action == "right":
+        datax = datax + 1
         update_sketch_x(datax)
-        print("datax = " + datax)
-    if datay != olddata2:
-        olddata2 = datay
+    if action == "left":
+        datax = datax - 1
+        update_sketch_x(datax)
+    if action == "up":
+        datay = datay + 1
         update_sketch_y(datay)
-        print("datay = " + datay)
+    if action == "down":
+        datay = datay - 1
+        update_sketch_y(datay)
+    templateData = {
+        'action' : action,
+    }
+    return render_template('index3.html', **templateData)
+if __name__ == "__main__":
+    app.run(host='0.0.0.0', port=8081, debug=True)
+
+# Sleep
+while True:
     time.sleep(0.1)
