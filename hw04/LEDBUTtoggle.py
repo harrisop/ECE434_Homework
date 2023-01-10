@@ -38,13 +38,13 @@ BUT2 = 1<<30
 
 # Next we need to make the mmap, using the desired size and offset:
 with open("/dev/mem", "r+b" ) as f:
-  mem2 = mmap(f.fileno(), GPIO0_size, offset=GPIO0_offset)
-  mem = mmap(f.fileno(), GPIO1_size, offset=GPIO1_offset)
+  but_mem = mmap(f.fileno(), GPIO0_size, offset=GPIO0_offset)
+  led_mem = mmap(f.fileno(), GPIO1_size, offset=GPIO1_offset)
 
 # The mmap is addressed byte by byte, so we can't just set a single bit. 
 # The easiest thing to do is grab the whole 4-byte register:
-output_packed_reg = mem[GPIO_OE:GPIO_OE+4]
-input_packed_reg = mem2[GPIO_OE:GPIO_OE+4]
+output_packed_reg = led_mem[GPIO_OE:GPIO_OE+4]
+input_packed_reg = but_mem[GPIO_OE:GPIO_OE+4]
 
 # We now have 32 bits packed into a string, so to do any sort of bitwise operations with it we must unpack it:
 # The 'L' tells struct.unpack() to unpack the string into an unsigned long, 
@@ -59,13 +59,13 @@ input_reg_status = struct.unpack("<L", input_packed_reg)[0]
 # the LED as an output by clearing its bit:
 output_reg_status &= ~(LED1)
 output_reg_status &= ~(LED2)
-input_reg_status |= ~(BUT1)
-input_reg_status |= ~(BUT2)
+input_reg_status |= (BUT1)
+input_reg_status |= (BUT2)
 
 # Now all that's left to do is to pack it little-endian back into a string and update the mmap:
 
-mem[GPIO_OE:GPIO_OE+4] = struct.pack("<L", output_reg_status)
-mem2[GPIO_OE:GPIO_OE+4] = struct.pack("<L", input_reg_status)
+led_mem[GPIO_OE:GPIO_OE+4] = struct.pack("<L", output_reg_status)
+but_mem[GPIO_OE:GPIO_OE+4] = struct.pack("<L", input_reg_status)
 
 
 # Now that we know the pin is configured as an output, it's time to get blinking. 
@@ -76,18 +76,20 @@ mem2[GPIO_OE:GPIO_OE+4] = struct.pack("<L", input_reg_status)
 # Writes to them affect only the pins whose bits are set to 1, making the next step much easier:
 try:
   while(True):
-    if(struct.unpack("<L", mem2[GPIO_DATAIN:GPIO_DATAIN+4])[0] & BUT1):
-      mem[GPIO_SETDATAOUT:GPIO_SETDATAOUT+4] = struct.pack("<L", LED1)
+    print(struct.unpack("<L", but_mem[GPIO_DATAIN:GPIO_DATAIN+4])[0] & BUT1)
+    if((struct.unpack("<L", but_mem[GPIO_DATAIN:GPIO_DATAIN+4])[0] & BUT1)):
+      led_mem[GPIO_SETDATAOUT:GPIO_SETDATAOUT+4] = struct.pack("<L", LED1)
       time.sleep(0.5)
-      mem[GPIO_CLEARDATAOUT:GPIO_CLEARDATAOUT+4] = struct.pack("<L", LED1)
-    if(struct.unpack("<L", mem2[GPIO_DATAIN:GPIO_DATAIN+4])[0] & BUT2):
-      mem[GPIO_SETDATAOUT:GPIO_SETDATAOUT+4] = struct.pack("<L", LED2)
+      led_mem[GPIO_CLEARDATAOUT:GPIO_CLEARDATAOUT+4] = struct.pack("<L", LED1)
+    if(struct.unpack("<L", but_mem[GPIO_DATAIN:GPIO_DATAIN+4])[0] & BUT2):
+      led_mem[GPIO_SETDATAOUT:GPIO_SETDATAOUT+4] = struct.pack("<L", LED2)
       time.sleep(0.5)
-      mem[GPIO_CLEARDATAOUT:GPIO_CLEARDATAOUT+4] = struct.pack("<L", LED2)
+      led_mem[GPIO_CLEARDATAOUT:GPIO_CLEARDATAOUT+4] = struct.pack("<L", LED2)
         
 
 except KeyboardInterrupt:
   # turn off LEDs before exiting
-  mem[GPIO_CLEARDATAOUT:GPIO_CLEARDATAOUT+4] = struct.pack("<L", LED1)
-  mem[GPIO_CLEARDATAOUT:GPIO_CLEARDATAOUT+4] = struct.pack("<L", LED2)
-  mem.close()
+  led_mem[GPIO_CLEARDATAOUT:GPIO_CLEARDATAOUT+4] = struct.pack("<L", LED1)
+  led_mem[GPIO_CLEARDATAOUT:GPIO_CLEARDATAOUT+4] = struct.pack("<L", LED2)
+  led_mem.close()
+  but_mem.close()

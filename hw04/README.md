@@ -25,3 +25,4 @@ I read the TMP101 sensors using the kernel driver and then converted the measure
 I modified my etch-a-sketch to take input from a web browser using flask. The etchasketch.py file is the file to run and it uses the html file etchasketch.html which can be found in the tmeplates folder. Using the buttons on the local web browser, you can now control where the cursor goes. Instructions for the game can be found on the web browser when you run the python file.
 
 ## LCD Display
+See playMedia.sh for the code that tests the LCD display. 
