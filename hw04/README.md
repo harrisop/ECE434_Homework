@@ -8,14 +8,8 @@ Here is the memory map I created for the beagle, referencing the memory map tabl
 
 ## GPIO Via MMAP
 1. See LEDBUTtoggle.py for the code that reads two switches and controls two LEDs using mmap
-2. See LEDtoggle.py for the code that toggles a GPIO port as fast as it can. The measurements for the different sleep times and without the sleep is shown in the table below.
-
-| Sleep Time | Speed |
-| ----------- | ---------|
-| 0.5 | x |
-| 0.1 | x |
-| 0.01 | x |
-| 0 | x |
+2. See LEDtoggle.py for the code that toggles a GPIO port as fast as it can. As the sleep time decreased, the speed of toggling increased but the increase started to level out as the sleep time 
+approached zero and when the usleep was removed. To the nake eye it just appeared as if the led remained on towards the end of this test. 
 
 ## I2C Via the Kernel
 See tempReadDriver.sh for the code. 
@@ -25,4 +19,4 @@ I read the TMP101 sensors using the kernel driver and then converted the measure
 I modified my etch-a-sketch to take input from a web browser using flask. The etchasketch.py file is the file to run and it uses the html file etchasketch.html which can be found in the tmeplates folder. Using the buttons on the local web browser, you can now control where the cursor goes. Instructions for the game can be found on the web browser when you run the python file.
 
 ## LCD Display
-See playMedia.sh for the code that tests the LCD display. 
+See playMedia.sh for the code that tests the LCD display. When you run the bash file, an image is displayed then rotated and displayed again, then text is added to the image and displayed. Finally there is a video that is displayed. 
