@@ -19,6 +19,7 @@ import time, struct
 
 # Using Pins P8_11 and P8_12 for LEDs, on chip 1
 # Using pins P9_11 and P9_13 for swithces, on chip 0
+# make sure pins P9_11 and P9_13 are configured as pull down
 
 GPIO0_offset = 0x44e07000
 GPIO1_offset = 0x4804c000
@@ -67,7 +68,6 @@ input_reg_status |= (BUT2)
 led_mem[GPIO_OE:GPIO_OE+4] = struct.pack("<L", output_reg_status)
 but_mem[GPIO_OE:GPIO_OE+4] = struct.pack("<L", input_reg_status)
 
-
 # Now that we know the pin is configured as an output, it's time to get blinking. 
 # We could use the GPIO_DATAOUT register to do this, 
 # but we would want to preserve the state of all the other bits in it, 
@@ -76,17 +76,18 @@ but_mem[GPIO_OE:GPIO_OE+4] = struct.pack("<L", input_reg_status)
 # Writes to them affect only the pins whose bits are set to 1, making the next step much easier:
 try:
   while(True):
-    print(struct.unpack("<L", but_mem[GPIO_DATAIN:GPIO_DATAIN+4])[0] & BUT1)
+
     if((struct.unpack("<L", but_mem[GPIO_DATAIN:GPIO_DATAIN+4])[0] & BUT1)):
       led_mem[GPIO_SETDATAOUT:GPIO_SETDATAOUT+4] = struct.pack("<L", LED1)
       time.sleep(0.5)
       led_mem[GPIO_CLEARDATAOUT:GPIO_CLEARDATAOUT+4] = struct.pack("<L", LED1)
+
     if(struct.unpack("<L", but_mem[GPIO_DATAIN:GPIO_DATAIN+4])[0] & BUT2):
       led_mem[GPIO_SETDATAOUT:GPIO_SETDATAOUT+4] = struct.pack("<L", LED2)
       time.sleep(0.5)
       led_mem[GPIO_CLEARDATAOUT:GPIO_CLEARDATAOUT+4] = struct.pack("<L", LED2)
+    
         
-
 except KeyboardInterrupt:
   # turn off LEDs before exiting
   led_mem[GPIO_CLEARDATAOUT:GPIO_CLEARDATAOUT+4] = struct.pack("<L", LED1)
