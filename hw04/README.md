@@ -12,7 +12,7 @@ Here is the memory map I created for the beagle, referencing the memory map tabl
 approached zero and when the usleep was removed. To the nake eye it just appeared as if the led remained on towards the end of this test. 
 
 ## I2C Via the Kernel
-See tempReadDriver.sh for the code. 
+See tempReadDriver.sh for the code. Run setuptemp.sh before runnign tempReadDriver.sh to set everything up.
 I read the TMP101 sensors using the kernel driver and then converted the measurement to degrees farenheit, printing them to the command line. 
 
 ## Etch-A-Sketch Part 4 (using Flask)
