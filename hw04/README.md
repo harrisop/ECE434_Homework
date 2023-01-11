@@ -20,3 +20,18 @@ I modified my etch-a-sketch to take input from a web browser using flask. The et
 
 ## LCD Display
 See playMedia.sh for the code that tests the LCD display. When you run the bash file, an image is displayed then rotated and displayed again, then text is added to the image and displayed. Finally there is a video that is displayed. 
+
+# hw04 grading
+
+| Points      | Description |
+| ----------- | ----------- |
+|  2/2 | Memory map 
+|  4/4 | mmap()
+|  4/4 | i2c via Kernel
+|  5/5 | Etch-a-Sketch via flask
+|  5/5 | LCD display
+|      | Extras
+| 20/20 | **Total**
+*Well done!*
+*My comments are in italics. --may*
+
