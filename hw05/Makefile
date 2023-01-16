@@ -48,14 +48,15 @@
 # -----------------------
 # ------ includes -------
 # -----------------------
-
+-include ./path.mak
 
 
 # --------------------------------
 # ------ user-defined vars -------
 # --------------------------------
-
-
+CC := $(LINUXarm_GCC)
+CFLAGS := -g
+LINK_FLAGS := -lstdc++
 
 # -----------------------
 # ------ make all -------
@@ -66,23 +67,24 @@
 # rule builds. In this solution, we only have one target.
 # However, in the final Beagle makefile, you'll see more
 # targets listed. 
-
-
-
+.PHONY : all
+all:	app.arm
 
 
 # -----------------------------------
 # ------ executable rule (.x) -------
 # -----------------------------------
-
+app.arm: app.o
+	$(CC) $(CFLAGS) $(LINK_FLAGS) $^ -o $@
+	@echo; echo $@ successfully created; echo
 
 
 
 # ---------------------------------------------------
 # ------ intermeditate object files rule (.o) -------
 # ---------------------------------------------------
-app.o : app.c
-	/usr/bin/gcc -g -c app.c -o app.o
+%.o : %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 
 # ----------------------
