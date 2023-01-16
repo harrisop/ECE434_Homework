@@ -31,7 +31,7 @@ MODULE_PARM_DESC(gpioLED2, " GPIO LED2 number (default=49)");
 static unsigned int blinkPeriod = 1000;     ///< The blink period in ms
 module_param(blinkPeriod, uint, S_IRUGO);   ///< Param desc. S_IRUGO can be read/not changed
 MODULE_PARM_DESC(blinkPeriod, " LED blink period in ms (min=1, default=1000, max=10000)");
-static unsigned int blinkPeriod2 = 800;  
+static unsigned int blinkPeriod2 = 200;  
 
 static char ledName[7] = "ledXXX";          ///< Null terminated default string -- just in case
 static bool ledOn = 0;                      ///< Is the LED on or off? Used for flashing
@@ -106,6 +106,8 @@ static struct attribute_group attr_group = {
 
 static struct kobject *ebb_kobj;            /// The pointer to the kobject
 static struct task_struct *task;            /// The pointer to the thread task
+static struct task_struct *task2;  
+
 
 /** @brief The LED Flasher main kthread loop
  *
@@ -118,20 +120,37 @@ static int flash(void *arg){
       set_current_state(TASK_RUNNING);
       if (mode==FLASH) {
          ledOn = !ledOn;
-         ledOn2 = !ledOn2;
       }    // Invert the LED state
       else if (mode==ON){
          ledOn = true;
-         ledOn2 = true;
       } 
       else{
          ledOn = false;
-         ledOn2 = false;
       } 
       gpio_set_value(gpioLED, ledOn);       // Use the LED state to light/turn off the LED
-      gpio_set_value(gpioLED2, ledOn2); 
       set_current_state(TASK_INTERRUPTIBLE);
       msleep(blinkPeriod/2);                // millisecond sleep for half of the period
+   }
+   printk(KERN_INFO "EBB LED: Thread has run to completion \n");
+   return 0;
+}
+
+static int flash2(void *arg){
+   printk(KERN_INFO "EBB LED: Thread has started running \n");
+   while(!kthread_should_stop()){           // Returns true when kthread_stop() is called
+      set_current_state(TASK_RUNNING);
+      if (mode==FLASH) {
+         ledOn2 = !ledOn2;
+      }    // Invert the LED state
+      else if (mode==ON){
+         ledOn2 = true;
+      } 
+      else{
+         ledOn2 = false;
+      } 
+      gpio_set_value(gpioLED2, ledOn2); 
+      set_current_state(TASK_INTERRUPTIBLE);
+      msleep(blinkPeriod2/2);                // millisecond sleep for half of the period
    }
    printk(KERN_INFO "EBB LED: Thread has run to completion \n");
    return 0;
@@ -174,9 +193,14 @@ static int __init ebbLED_init(void){
                                  // the second argument prevents the direction from being changed
    gpio_export(gpioLED2, false); 
    task = kthread_run(flash, NULL, "LED_flash_thread");  // Start the LED flashing thread
+   task2 = kthread_run(flash2, NULL, "LED_flash_thread");
    if(IS_ERR(task)){                                     // Kthread name is LED_flash_thread
       printk(KERN_ALERT "EBB LED: failed to create the task\n");
       return PTR_ERR(task);
+   }
+   if(IS_ERR(task2)){                                     // Kthread name is LED_flash_thread
+      printk(KERN_ALERT "EBB LED: failed to create the task\n");
+      return PTR_ERR(task2);
    }
    return result;
 }
@@ -187,6 +211,7 @@ static int __init ebbLED_init(void){
  */
 static void __exit ebbLED_exit(void){
    kthread_stop(task);                      // Stop the LED flashing thread
+   kthread_stop(task2);  
    kobject_put(ebb_kobj);                   // clean up -- remove the kobject sysfs entry
    gpio_set_value(gpioLED, 0);              // Turn the LED off, indicates device was unloaded
    gpio_set_value(gpioLED2, 0);  
