@@ -22,8 +22,11 @@ MODULE_DESCRIPTION("A simple Linux LED driver LKM for the BBB");
 MODULE_VERSION("0.1");
 
 static unsigned int gpioLED = 44;           ///< Default GPIO for the LED is 49
+static unsigned int gpioLED2 = 45;
 module_param(gpioLED, uint, S_IRUGO);       ///< Param desc. S_IRUGO can be read/not changed
+module_param(gpioLED2, uint, S_IRUGO); 
 MODULE_PARM_DESC(gpioLED, " GPIO LED number (default=49)");     ///< parameter description
+MODULE_PARM_DESC(gpioLED2, " GPIO LED2 number (default=49)"); 
 
 static unsigned int blinkPeriod = 1000;     ///< The blink period in ms
 module_param(blinkPeriod, uint, S_IRUGO);   ///< Param desc. S_IRUGO can be read/not changed
@@ -31,6 +34,7 @@ MODULE_PARM_DESC(blinkPeriod, " LED blink period in ms (min=1, default=1000, max
 
 static char ledName[7] = "ledXXX";          ///< Null terminated default string -- just in case
 static bool ledOn = 0;                      ///< Is the LED on or off? Used for flashing
+static bool ledOn2 = 0; 
 enum modes { OFF, ON, FLASH };              ///< The available LED modes -- static not useful here
 static enum modes mode = FLASH;             ///< Default mode is flashing
 
@@ -78,8 +82,8 @@ static ssize_t period_store(struct kobject *kobj, struct kobj_attribute *attr, c
  *  The period variable is associated with the blinkPeriod variable and it is to be exposed
  *  with mode 0666 using the period_show and period_store functions above
  */
-static struct kobj_attribute period_attr = __ATTR(blinkPeriod, 0666, period_show, period_store);
-static struct kobj_attribute mode_attr = __ATTR(mode, 0666, mode_show, mode_store);
+static struct kobj_attribute period_attr = __ATTR(blinkPeriod, 0660, period_show, period_store);
+static struct kobj_attribute mode_attr = __ATTR(mode, 0660, mode_show, mode_store);
 
 /** The ebb_attrs[] is an array of attributes that is used to create the attribute group below.
  *  The attr property of the kobj_attribute is used to extract the attribute struct
@@ -111,10 +115,20 @@ static int flash(void *arg){
    printk(KERN_INFO "EBB LED: Thread has started running \n");
    while(!kthread_should_stop()){           // Returns true when kthread_stop() is called
       set_current_state(TASK_RUNNING);
-      if (mode==FLASH) ledOn = !ledOn;      // Invert the LED state
-      else if (mode==ON) ledOn = true;
-      else ledOn = false;
+      if (mode==FLASH) {
+         ledOn = !ledOn; 
+         ledOn2 = !ledOn2;
+      }    // Invert the LED state
+      else if (mode==ON){
+         ledOn = true;
+         ledOn2 = true;
+      } 
+      else{
+         ledOn = false;
+         ledOn2 = false;
+      } 
       gpio_set_value(gpioLED, ledOn);       // Use the LED state to light/turn off the LED
+      gpio_set_value(gpioLED2, ledOn2); 
       set_current_state(TASK_INTERRUPTIBLE);
       msleep(blinkPeriod/2);                // millisecond sleep for half of the period
    }
@@ -140,6 +154,7 @@ static int __init ebbLED_init(void){
       printk(KERN_ALERT "EBB LED: failed to create kobject\n");
       return -ENOMEM;
    }
+   
    // add the attributes to /sys/ebb/ -- for example, /sys/ebb/led49/ledOn
    result = sysfs_create_group(ebb_kobj, &attr_group);
    if(result) {
@@ -147,12 +162,16 @@ static int __init ebbLED_init(void){
       kobject_put(ebb_kobj);                // clean up -- remove the kobject sysfs entry
       return result;
    }
+   
    ledOn = true;
+   ledOn2 = true;
    gpio_request(gpioLED, "sysfs");          // gpioLED is 49 by default, request it
+   gpio_request(gpioLED2, "sysfs");  
    gpio_direction_output(gpioLED, ledOn);   // Set the gpio to be in output mode and turn on
+   gpio_direction_output(gpioLED2, ledOn2);  
    gpio_export(gpioLED, false);  // causes gpio49 to appear in /sys/class/gpio
                                  // the second argument prevents the direction from being changed
-
+   gpio_export(gpioLED2, false); 
    task = kthread_run(flash, NULL, "LED_flash_thread");  // Start the LED flashing thread
    if(IS_ERR(task)){                                     // Kthread name is LED_flash_thread
       printk(KERN_ALERT "EBB LED: failed to create the task\n");
@@ -169,8 +188,11 @@ static void __exit ebbLED_exit(void){
    kthread_stop(task);                      // Stop the LED flashing thread
    kobject_put(ebb_kobj);                   // clean up -- remove the kobject sysfs entry
    gpio_set_value(gpioLED, 0);              // Turn the LED off, indicates device was unloaded
+   gpio_set_value(gpioLED2, 0);  
    gpio_unexport(gpioLED);                  // Unexport the Button GPIO
+   gpio_unexport(gpioLED2); 
    gpio_free(gpioLED);                      // Free the LED GPIO
+   gpio_free(gpioLED2);  
    printk(KERN_INFO "EBB LED: Goodbye from the EBB LED LKM!\n");
 }
 
