@@ -14,7 +14,7 @@ import Adafruit_BBIO.GPIO as GPIO
 import time
 import smbus
 import binascii
-import Adafruit_ADXL345
+from adxl345 import ADXL345
 
 # set up LEDmatrix
 bus = smbus.SMBus(2)  # Use i2c bus 2
@@ -25,7 +25,7 @@ bus.write_byte_data(matrix, 0x81, 0)   # Disp on, blink off (p11)
 bus.write_byte_data(matrix, 0xe7, 0)   # Full brightness (page 15)
 
 # set up accelerometer
-accel = Adafruit_ADXL345.ADXL345(address=0x53, busnum=2)
+adxl345 = ADXL345()
 
 # Define clear button, leftmost button
 BUT1 = "P9_11"
@@ -150,21 +150,28 @@ GPIO.remove_event_detect(BUT1)
 GPIO.add_event_detect(BUT1, GPIO.FALLING, callback=direction_pressed) 
 
 # Wait for input from accelerometer
-#read = [0,0,0]
-read = 0
+olddata = 0
+olddata2 = 0
 while True:
-    #read = accel.acceleration
-    #read = bus.read_i2c_block_data(0x53,0)
-    x, y, z = accel.read()
-    print(x, y, z)
-    #datax = read[0]
-    #datay = read[1]
-    #if datax != olddata:
-    #    olddata = datax
-    #    update_sketch_x(datax)
-    #    print("datax = " + datax)
-    #if datay != olddata2:
-    #    olddata2 = datay
-    #    update_sketch_y(datay)
-    #    print("datay = " + datay)
-    time.sleep(0.2)
+    axes = adxl345.getAxes(True)
+    rx = axes['x']
+    ry = axes['y']
+    datax = rx
+    datay = ry
+    if datax > 0.1 :
+        olddata = olddata + 1
+        update_sketch_x(olddata)
+        print("datax = " , datax)
+    elif datax < -0.1:
+        olddata = olddata - 1
+        update_sketch_x(olddata)
+        print("datax = " , datax)
+    elif datay > 0.1:
+        olddata2 = olddata2 + 1
+        update_sketch_y(olddata2)
+        print("datay = " , datay)
+    elif datay < -0.1:
+        olddata2 = olddata2 - 1
+        update_sketch_y(olddata2)
+        print("datay = " , datay)
+    time.sleep(0.5)
