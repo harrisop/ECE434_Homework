@@ -117,7 +117,7 @@ static int flash(void *arg){
    while(!kthread_should_stop()){           // Returns true when kthread_stop() is called
       set_current_state(TASK_RUNNING);
       if (mode==FLASH) {
-         ledOn = !ledOn; 
+         ledOn = !ledOn;
          ledOn2 = !ledOn2;
       }    // Invert the LED state
       else if (mode==ON){
