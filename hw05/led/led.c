@@ -31,6 +31,7 @@ MODULE_PARM_DESC(gpioLED2, " GPIO LED2 number (default=49)");
 static unsigned int blinkPeriod = 1000;     ///< The blink period in ms
 module_param(blinkPeriod, uint, S_IRUGO);   ///< Param desc. S_IRUGO can be read/not changed
 MODULE_PARM_DESC(blinkPeriod, " LED blink period in ms (min=1, default=1000, max=10000)");
+static unsigned int blinkPeriod2 = 800;  
 
 static char ledName[7] = "ledXXX";          ///< Null terminated default string -- just in case
 static bool ledOn = 0;                      ///< Is the LED on or off? Used for flashing

@@ -14,6 +14,7 @@ import Adafruit_BBIO.GPIO as GPIO
 import time
 import smbus
 import binascii
+#import adafruit_adxl34x
 
 # set up LEDmatrix
 bus = smbus.SMBus(2)  # Use i2c bus 2
@@ -25,6 +26,7 @@ bus.write_byte_data(matrix, 0xe7, 0)   # Full brightness (page 15)
 
 # set up accelerometer
 
+#accel = adafruit_adxl34x.ADXL345(bus)
 
 # Define clear button, leftmost button
 BUT1 = "P9_11"
@@ -149,19 +151,20 @@ GPIO.remove_event_detect(BUT1)
 GPIO.add_event_detect(BUT1, GPIO.FALLING, callback=direction_pressed) 
 
 # Wait for input from accelerometer
-olddata = -1
-olddata2 = -1
+#read = [0,0,0]
+read = 0
 while True:
-    f.seek(0)
-    f2.seek(0)
-    datax = f.read()
-    datay = f2.read()
-    if datax != olddata:
-        olddata = datax
-        update_sketch_x(datax)
-        print("datax = " + datax)
-    if datay != olddata2:
-        olddata2 = datay
-        update_sketch_y(datay)
-        print("datay = " + datay)
-    time.sleep(0.1)
+    #read = accel.acceleration
+    read = bus.read_byte_data(0x53, 0) 
+    print(read)
+    #datax = read[0]
+    #datay = read[1]
+    #if datax != olddata:
+    #    olddata = datax
+    #    update_sketch_x(datax)
+    #    print("datax = " + datax)
+    #if datay != olddata2:
+    #    olddata2 = datay
+    #    update_sketch_y(datay)
+    #    print("datay = " + datay)
+    time.sleep(0.2)
