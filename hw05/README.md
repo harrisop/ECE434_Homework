@@ -20,3 +20,19 @@ led: blinks two leds at different rates, 1000 ms and 200 ms. The led pins are P8
 
 ## ADXL345 Accelerometer
 Run the adxlSetup.sh file to ensure the device is properly set up for use. adxlViaKernel.sh tests that the device data can be read. The data read from the accelerometer is used to drive the etchasketch python file. I got a library off of the internet called adxl345.py in order to be able to more easily drive my etch-a-sketch with the accelerometer.
+
+# hw05 grading
+
+| Points      | Description |
+| ----------- | ----------- |
+|  0/0 | Project 
+|  2/2 | Makefile
+|  6/6 | Kernel Source
+|  4/4 | Etch-a-Sketch
+|  8/8 | Kernel Modules: hello, ebbchar, gpio_test, led
+|  4/4 | Extras - Blink at different rates
+| 24/20 | **Total**
+
+*My comments are in italics. --may*
+
+*Well done.  Very complete.*
