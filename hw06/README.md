@@ -16,5 +16,4 @@ Answers:
 10. A non-critical irq is keeping the external event from starting in Figure 3, the external event cannot be scheduled until the irq is finished executing.
 11. The external event in Figure 4 can start sooner because it uses the preempt_rt patch which allows forced IRQ threading. This means that when an IRQ is fired only a little code is actually run, just enough to wake up threads that will execute their respective handlers, allowing the high priority external event to start sooner.
 
-
 ## PREEMPT_RT
