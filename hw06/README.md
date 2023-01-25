@@ -26,3 +26,18 @@ For the unloaded test, it appears both kernels have about the same performance a
 For the loaded test, the real time kernel has about the same performace as it did with no load, with a bound still around 100 microseconds. The non-rt kernel had worse performance with the load compared to when it had no load, and the bound of its performance is harder to distinguish. See cyclictest_load.png below
 <br>
 <img src=./cyclictest_load.png>
+
+# hw06 grading
+
+| Points      | Description | |
+| ----------- | ----------- |-|
+|  2/2 | Project |*UV Exposure Detection*
+|  5/5 | Questions
+|  4/4 | PREEMPT_RT | *Nice loadtest*
+|  2/2 | Plots to 500 us
+|  5/5 | Plots - Heavy/Light load
+|  2/2 | Extras
+| 20/20 | **Total**
+
+*My comments are in italics. --may*
+
