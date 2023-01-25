@@ -1,0 +1,10 @@
+[Unit]
+Description=flask server
+
+[Service]
+WorkingDirectory=/home/debian/ECE434_Homework/hw07
+ExecStart=/home/debian/ECE434_Homework/hw07/app4.py
+SyslogIdentifier=flask
+
+[Install]
+WantedBy=multi-user.target
