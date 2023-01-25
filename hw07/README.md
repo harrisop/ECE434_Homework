@@ -3,6 +3,7 @@
 ### Sophia Harrison 
 
 ## 1-Wire Temperature Sensors
-See read1wires.sh for the bash file that reads all three temperature sensors from P9_14.
+See read1wires.sh for the bash file that reads all three temperature sensors from P9_14 and prints to the terminal values in farenheit.
 
 ## systemd
+The file flask.service is the service file I made to run my flask client automatically once the bone reboots. The flask service runs the file app4.py which lets you control a led on pin P8_12 using the flask server. 
