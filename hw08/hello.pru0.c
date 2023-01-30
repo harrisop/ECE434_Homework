@@ -14,25 +14,26 @@ void main(void) {
 	/* Clear SYSCFG[STANDBY_INIT] to enable OCP master port */
 	CT_CFG.SYSCFG_bit.STANDBY_INIT = 0;
 
-	for(i=0; i<10; i++) {
-		gpio3[GPIO_SETDATAOUT]   = P9_31;	// The the USR3 LED on
-		__R30 |= P9_31;	
+	//for(i=0; i<10; i++) {
+	while(1){
+		gpio3[GPIO_SETDATAOUT]   = (1<<14);	// The the USR3 LED on
 
 		__delay_cycles(500000000/5);    	// Wait 1/2 second
+		// __delay_cycles(0); 
 
-		gpio3[GPIO_CLEARDATAOUT] = P9_31;
-		__R30 &= ~P9_31;	
+		gpio3[GPIO_CLEARDATAOUT] = (1<<14);
 
 		__delay_cycles(500000000/5); 
+		// __delay_cycles(0); 
 
 	}
 	__halt();
+	
 }
 
 // Turns off triggers
 #pragma DATA_SECTION(init_pins, ".init_pins")
 #pragma RETAIN(init_pins)
 const char init_pins[] =  
-	"/sys/class/gpio/export\0 110\0" \
-	"/sys/class/gpio/gpio110/direction\0out\0" \
+	"/sys/class/leds/beaglebone:green:usr3/trigger\0none\0" \
 	"\0\0";

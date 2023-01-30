@@ -25,8 +25,7 @@
 // GPIO6
 #define P9_25   (1<<17)
 // GPIO8
-#define P8_17   (1<<18)
-
+#define P8_17   (1<18)
 
 // These define which bin in register R30 go to which header pins
 // R30 bits - Output on pru1_1
@@ -68,7 +67,6 @@
 // GPIO1
 #define P9_14 (1<<18)
 #define P9_16 (1<<19)
-#define P9_31 (1<<14)
 
 // The define a couple of GPIO pin addresses on Pocket
 // GPIO1
@@ -101,6 +99,6 @@
 
 #endif
 // /4 to convert from byte address to word address
-#define GPIO_CLEARDATAOUT	0x190     // Write 1 here to set a given bit    
-#define GPIO_SETDATAOUT 	0x194     // A 1 here clears the corresponding bit
-#define GPIO_DATAOUT		0x138     // For reading the GPIO registers
+#define GPIO_CLEARDATAOUT	0x190/4     // Write 1 here to set a given bit    
+#define GPIO_SETDATAOUT 	0x194/4     // A 1 here clears the corresponding bit
+#define GPIO_DATAOUT		0x138/4     // For reading the GPIO registers
