@@ -3,13 +3,13 @@
 ### Sophia Harrison 
 
 ## 2.6 BLinking an LED
-See hello.pru0.c for the code for this part. To start the PRU code you type in the command line "make start" and similarly, to stop you type in "make stop" and this will stop the PRU code execution. The pin toggles pretty fast, with a frequency of about 12.5Mhz. There appears to be some jitter but for the most part it seems stable. 
+See hello.pru0.c for the code for this part. To start the PRU code you type in the command line "make start" and similarly, to stop you type in "make stop" and this will stop the PRU code execution. The pin toggles pretty fast, with a frequency of about 12.5MHz. There appears to be some jitter but for the most part it seems stable. 
 
 ## 5.3 PWM Generator
 See pwm1.pru0.c for the code for this part. Make sure to run pwm_setup.sh to set up the beagle pins for this code. I did a scope capture with the delays of 2000 cycles added to make the waveform symmetric and at around 50MHz. <br>
-Waveform Stability &rarr much more stable than the last. <br>
-Std Dev &rarr about 150 mV <br>
-Jitter? &rarr no real visible jitter <br>
+Waveform Stability -> much more stable than the last. <br>
+Std Dev -> about 150 mV <br>
+Jitter? -> no real visible jitter <br>
 
 
 ## 5.4 Controlling the PWM Frequency
