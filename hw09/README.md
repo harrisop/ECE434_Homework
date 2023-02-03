@@ -10,3 +10,5 @@ See demo.py for the code for this part. I read each of the three MAX31820 temper
 https://docs.google.com/spreadsheets/d/1p_-odXo4W1JM40Ohqu4olP6b_OiRnx5DT7bMKgLPjT0/edit?usp=sharing 
 <br>
 Below you can see a screenshot of the plot produced from the collected data:
+<img src=./tempVtime.png width="500"> <br>
+For this run, data was collected every 10 seconds. The spikes are from when I placed my finger on some of the sensors. I was recording this data inside in the Moench commons.
