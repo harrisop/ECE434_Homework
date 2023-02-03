@@ -24,7 +24,7 @@ from google.auth.transport.requests import Request
 import time, sys
 from w1thermsensor import W1ThermSensor
 
-sleepTime = 15*60
+sleepTime = 10*1000
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
@@ -66,7 +66,10 @@ def main():
         i = 0
         for sensor in W1ThermSensor.get_available_sensors():
             # goes through each sensor active and prints temp
-            temps[i] = sensor.get_temperature()
+            try:
+                temps[i] = sensor.get_temperature()
+            except:
+                print("not ready yet")
             i = i + 1
 
 
@@ -76,13 +79,16 @@ def main():
     
 
         body = {'values': values}
-        result = sheet.values().append(spreadsheetId=SAMPLE_SPREADSHEET_ID,
+        try:
+            result = sheet.values().append(spreadsheetId=SAMPLE_SPREADSHEET_ID,
                                 range=SAMPLE_RANGE_NAME,
                                 valueInputOption='USER_ENTERED', 
                                 body=body
                                 ).execute()
+        except:
+            print("sheet error")
         #print(result)
-        time.sleep(sleepTime)
+        time.sleep(sleepTime/1000)
 
 if __name__ == '__main__':
     main()
