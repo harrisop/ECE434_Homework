@@ -22,6 +22,9 @@ from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
 import time, sys
+from w1thermsensor import W1ThermSensor
+
+sleepTime = 15*60
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
@@ -56,16 +59,30 @@ def main():
 
     service = build('sheets', 'v4', credentials=creds)
 
-    # Call the Sheets API
-    sheet = service.spreadsheets()
-    values = [ [time.time()/60/60/24+ 25569 - 4/24, sys.argv[1], sys.argv[2]]]
-    body = {'values': values}
-    result = sheet.values().append(spreadsheetId=SAMPLE_SPREADSHEET_ID,
+
+    temps = [ 0, 0, 0 ]
+
+    while True:
+        i = 0
+        for sensor in W1ThermSensor.get_available_sensors():
+            # goes through each sensor active and prints temp
+            temps[i] = sensor.get_temperature()
+            i = i + 1
+
+
+        # Call the Sheets API
+        sheet = service.spreadsheets()
+        values = [ [time.time()/60/60/24+ 25569 - 4/24, temps[0], temps[1], temps[2] ] ]
+    
+
+        body = {'values': values}
+        result = sheet.values().append(spreadsheetId=SAMPLE_SPREADSHEET_ID,
                                 range=SAMPLE_RANGE_NAME,
                                 valueInputOption='USER_ENTERED', 
                                 body=body
                                 ).execute()
-    print(result)
+        print(result)
+        #time.sleep(10)
 
 if __name__ == '__main__':
     main()
