@@ -81,8 +81,8 @@ def main():
                                 valueInputOption='USER_ENTERED', 
                                 body=body
                                 ).execute()
-        print(result)
-        #time.sleep(10)
+        #print(result)
+        time.sleep(sleepTime)
 
 if __name__ == '__main__':
     main()
