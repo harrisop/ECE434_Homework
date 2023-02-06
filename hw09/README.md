@@ -2,6 +2,10 @@
 ## Logging Data in the Cloud
 ### Sophia Harrison 
 
+## Project
+My project timeline was made and can be seen in the readme file in its repository at: <br>
+https://github.com/DavidPurdy1/BeagleBoneWaterTurret 
+
 ## MAX31820 Temperature Sensors
 See readW1Temp.py for this code. Using python, I read each MAX31820 temperature sensor and print their values in celsius to the terminal.
 
