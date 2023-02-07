@@ -21,3 +21,15 @@ See pwm4.pru0.c and pwm-test.c for the code for this part. The output pins P9_31
 See input.pru0.c for the code and run the input_setup.sh bash file to set up the beagle to run this code. <br>
 How fast the code can transfer the input to the ouput? -> Using a function generator and a scope I found the fastest it could go is about 500 ns, seen in the capture below. <br>
 <img src=./scope_captures/part4.png width="500">
+
+# hw08 grading
+
+| Points      | Description |
+| ----------- | ----------- |
+| 14/14 | PRU
+|  2/2 | Controlling the PWM Frequency - optional
+|  2/2 | Reading an Input at Regular Intervals - optional
+|  0/2 | Analog Wave Generator - optional
+| 20/20 | **Total**
+*Nice plots!*  +2
+*My comments are in italics. --may*
