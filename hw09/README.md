@@ -16,3 +16,16 @@ https://docs.google.com/spreadsheets/d/1p_-odXo4W1JM40Ohqu4olP6b_OiRnx5DT7bMKgLP
 Below you can see a screenshot of the plot produced from the collected data:
 <img src=./tempVtime.png width="500"> <br>
 For this run, data was collected every 10 seconds. The spikes are from when I placed my finger on some of the sensors. I was recording this data inside in the Moench commons.
+
+# hw09 grading
+
+| Points      | Description | |
+| ----------- | ----------- |-|
+|  5/5 | Timeline | *Nice timeline*
+|  3/3 | MAX31820 working
+| 12/12| Logging to Sheets
+| 20/20| **Total**
+
+*My comments are in italics. --may*
+
+*Looks good.*
